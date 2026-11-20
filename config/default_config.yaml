@@ -1,0 +1,52 @@
+# Замыг төслийн үндэснээс тоолно.
+source: 0
+intrinsics: config/camera_intrinsics.yaml
+snapshot_dir: data/snapshots
+camera_width: 640
+camera_height: 480
+detector:
+  backend: openvino
+  device: CPU
+  prompts: [cup, phone, laptop]
+  dynamic_fallback: true
+  weights: models/yolov8s-worldv2.pt
+  ir_path: models/detector.xml
+  onnx_path: models/detector.onnx
+  image_size: 640
+  confidence: 0.1
+depth:
+  backend: openvino
+  device: GPU
+  hf_model: depth-anything/Depth-Anything-V2-Metric-Indoor-Small-hf
+  ir_path: models/depth.xml
+  onnx_path: models/depth.onnx
+  input_height: 392
+  input_width: 518
+  depth_every_n_frames: 2
+  # Ижил өргөнд дүйцүүлсэн жишиг фокусыг хэмжилтээр тогтоосны дараа оруулна.
+  train_focal_px: null
+  focal_reference_width: 640
+sampling:
+  fraction: 0.38
+  percentile: 30
+smoothing:
+  method: ema
+  alpha: 0.35
+  process_noise: 0.001
+  measurement_noise: 0.02
+serial:
+  # Тодорхой портыг жишээлбэл /dev/ttyACM0 гэж өгнө.
+  port: null
+  baud: 921600
+  max_age_s: 0.25
+fusion:
+  # Камерын төвөөс мэдрэгчийн төв хүртэл баруун ба доош чиглэсэн тэмдэгтэй метр.
+  dx_m: 0.025
+  dy_m: 0.0
+  hfov_deg: 45.0
+  vfov_deg: 45.0
+  rotation_deg: 0
+  min_zones: 6
+  min_spread_m: 0.05
+proximity_warning_m: 0.30
+bev_range_m: 4.0
